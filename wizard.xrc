@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resource xmlns="http://www.wxwidgets.org/wxxrc" version="2.5.3.0">
+	<object class="wxPanel" name="librariesChoice">
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<object class="wxStaticText" name="ID_STATICTEXT1">
+					<label>Toolchain</label>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <object class="sizeritem">
+                        <object class="wxTextCtrl" name="m_toolchainpath">
+                            <value>Text</value>
+                            <style>wxTE_READONLY</style>
+                        </object>
+                        <flag>wxALL|wxEXPAND</flag>
+                        <border>5</border>
+                        <option>1</option>
+                    </object>
+<!--                    <object class="sizeritem">
+                        <object class="wxButton" name="ID_BUTTONTOOLCHAIN">
+                            <label>...</label>
+                            <size>22,22</size>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                    </object>-->
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>0</border>
+            </object>
+			<object class="sizeritem">
+				<object class="wxStaticText" name="ID_STATICTEXT2">
+					<label>SDK</label>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <object class="sizeritem">
+                        <object class="wxTextCtrl" name="m_sdkpath">
+                            <value>Text</value>
+                            <style>wxTE_READONLY</style>
+                        </object>
+                        <flag>wxALL|wxEXPAND</flag>
+                        <border>5</border>
+                        <option>1</option>
+                    </object>
+<!--                    <object class="sizeritem">
+                        <object class="wxButton" name="ID_BUTTONTOOLCHAIN">
+                            <label>...</label>
+                            <size>22,22</size>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                    </object>-->
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>0</border>
+            </object>
+			<object class="sizeritem">
+				<object class="wxStaticText" name="ID_STATICTEXT3">
+					<label>Use libraries</label>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxCheckListBox" name="m_listLibraries">
+					<content>
+                        <item checked="1">c</item>
+                        <item checked="1">gcc</item>
+                        <item checked="1">hal</item>
+                        <item checked="1">main</item>
+                        <item checked="1">pp</item>
+                        <item checked="1">phy</item>
+                        <item checked="1">net80211</item>
+                        <item checked="1">lwip</item>
+                        <item checked="1">wpa</item>
+                        <item checked="1">wps</item>
+					</content>
+					<size>360,250</size>
+					<style>wxLB_MULTIPLE</style>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+            <object class="sizeritem">
+				<object class="wxCheckBox" name="m_useICACHE_FLASH_ATTR">
+                    <label>Use ICACHE_FLASH_ATTR for user__init()</label>
+                    <checked>1</checked>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+            <object class="sizeritem">
+				<object class="wxCheckBox" name="m_useBlinky">
+                    <label>Use Blinky example</label>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+		</object>
+	</object>
+</resource>

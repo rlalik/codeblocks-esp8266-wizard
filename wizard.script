@@ -1,0 +1,245 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// Code::Blocks new project wizard script
+//
+// Project: Atmel AVR project
+// Author:  Brian Sidebotham
+// Modified: H. Metin OZER
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// Global Vars
+ToolchainPath <- _T("");
+SdkPath <- _T("");
+Libs <- _T("");
+EspPort <- _T("/dev/ttyUSB0");
+
+// Global helper
+useICACHE_FLASH_ATTR <- true;
+useBlinky <- false;
+SelectedLibraries <- wxArrayString();
+
+function BeginWizard()
+{
+    local wiz_type = Wizard.GetWizardType();
+
+    if (wiz_type == wizProject)
+    {
+        local intro_msg = _T("Welcome to the ESP8266 project wizard!\n" +
+                             "This wizard will guide you to create a new ESP8266 project.\n\n" +
+                             "When you 're ready to proceed, please click \"Next\"...");
+
+        Wizard.AddInfoPage(_T("Esp8266Intro"), intro_msg);
+        Wizard.AddGenericSelectPathPage(_T("ToolchainPathPage"),
+                                        _T("Choose location of your toolchain.\n\n" +
+                                        "If XTENSA_TOOLS_ROOT env variable is set,\n" +
+                                        "it will be used by default."),
+                                        _T("Toolchain location"), _T("$(XTENSA_TOOLS_ROOT)"));
+        Wizard.AddGenericSelectPathPage(_T("SDKPathPage"),
+                                        _T("Choose location of the SDK.\n\n" +
+                                        "If SDK_BASE env variable is set,\n" +
+                                        "it will be used by default."),
+                                        _T("SDK location"), _T("$(SDK_BASE)"));
+        Wizard.AddPage(_T("librariesChoice"));
+        Wizard.AddProjectPathPage();
+//         Wizard.AddCompilerPage(_T("GNU Xtensa GCC Compiler"), _T("xtensa-lx106*"), false, true);
+//         Wizard.AddPage(_T("processorChoice"));
+//         Wizard.AddPage(_T("programmerChoice"));
+    }
+    else
+        print(wiz_type);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Processor choice page
+////////////////////////////////////////////////////////////////////////////////
+
+function OnLeave_ToolchainPathPage(fwd)
+{
+    if (fwd)
+    {
+        local dir         = Wizard.GetTextControlValue(_T("txtFolder")); // txtFolder is the text control in GenericSelectPathPage
+        local dir_nomacro = VerifyDirectory(dir);
+
+        if (dir_nomacro.IsEmpty())
+            return false;
+
+        ToolchainPath = dir;
+    }
+    return true;
+}
+
+function OnLeave_SDKPathPage(fwd)
+{
+    if (fwd)
+    {
+        local dir         = Wizard.GetTextControlValue(_T("txtFolder")); // txtFolder is the text control in GenericSelectPathPage
+        local dir_nomacro = VerifyDirectory(dir);
+ 
+        if (dir_nomacro.IsEmpty())
+            return false;
+
+        SdkPath = dir;
+
+    }
+    return true;
+}
+
+function OnEnter_librariesChoice(fwd)
+{
+    if (fwd)
+    {
+        Wizard.SetTextControlValue(_T("m_toolchainpath"), ToolchainPath);
+        Wizard.SetTextControlValue(_T("m_sdkpath"), SdkPath);
+    }
+
+    return true;
+}
+
+function OnLeave_librariesChoice(fwd)
+{
+    if (fwd)
+    {
+        local libraries = Wizard.GetCheckListboxStringChecked(_T("m_listLibraries"));
+        SelectedLibraries = GetArrayFromString(libraries, _(";"), true);
+
+        useICACHE_FLASH_ATTR = Wizard.IsCheckboxChecked(_T("m_useICACHE_FLASH_ATTR"));
+        useBlinky = Wizard.IsCheckboxChecked(_T("m_useBlinky"));
+    }
+
+    AddLibrary(_T("c"), _T("c"));
+    AddLibrary(_T("gcc"), _T("gcc"));
+    AddLibrary(_T("hal"), _T("hal"));
+    AddLibrary(_T("main"), _T("main"));
+    AddLibrary(_T("pp"), _T("pp"));
+    AddLibrary(_T("phy"), _T("phy"));
+    AddLibrary(_T("net80211"), _T("net80211"));
+    AddLibrary(_T("lwip"), _T("lwip"));
+    AddLibrary(_T("wpa"), _T("wpa"));
+    AddLibrary(_T("wps"), _T("wps"));
+
+    return true;
+}
+
+function AddLibrary(name, define)
+{
+    if (SelectedLibraries.Index(name) != -1)
+    {
+        local libs = Libs;
+        Libs = libs + _T(" ") + define;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Processor choice page
+////////////////////////////////////////////////////////////////////////////////
+
+// -----------------------------------------------------------------------------
+// each time, return a string of the form "filename.ext;contents"
+// you can change the return string based on <file_index>
+// return an empty string to denote that no more files are to be generated
+function GetGeneratedFile(file_index)
+{
+    if (file_index == 0)
+    {
+        local path = Wizard.FindTemplateFile(_T("esp8266/files/Makefile"));
+        return _T("Makefile") + _T(";") + GenerateMakefile(file_index);
+    }
+    else
+    if (file_index == 1)
+    {
+        local path = Wizard.FindTemplateFile(_T("esp8266/files/user/user_main.c"));
+        return _T("user/user_main.c") + _T(";") + GenerateSourceFile(file_index);
+    }
+    else
+    if (file_index == 2)
+    {
+        local path = Wizard.FindTemplateFile(_T("esp8266/files/user/user_config.h"));
+        return _T("user/user_config.h") + _T(";") + GenerateSourceFile(file_index);
+    }
+
+    return _T(""); // no more generated files
+}
+
+// -----------------------------------------------------------------------------
+// return the template's filename, appending <dot_ext> as an extension (must include the dot)
+function GetTemplateFile(index)
+{
+    local template_file = _T("");
+
+    if (index == 0)
+        template_file = _T("esp8266/files/Makefile");
+    else
+    if (index == 1)
+    {
+        if (useBlinky)
+            template_file = _T("esp8266/files/user/user_main.c.blinky");
+        else
+            template_file = _T("esp8266/files/user/user_main.c");
+    }
+    else
+    if (index == 2)
+        template_file = _T("esp8266/files/user/user_config.h");
+
+    return template_file;
+}
+function GetFilesDir()
+{
+    local result = _T("");
+    return result;
+}
+
+// -----------------------------------------------------------------------------
+// return the implementation contents string
+function GenerateMakefile(index)
+{
+    local path = Wizard.FindTemplateFile(GetTemplateFile(index));
+    local buffer = IO.ReadFileContents(path);
+
+    return SubstituteMacros(buffer);
+}
+
+// -----------------------------------------------------------------------------
+// return the implementation contents string
+function GenerateSourceFile(index)
+{
+    local path = Wizard.FindTemplateFile(GetTemplateFile(index));
+    local buffer = IO.ReadFileContents(path);
+
+    return SubstituteMacros(buffer);
+}
+
+// -----------------------------------------------------------------------------
+// substitute all plugin macros in <buffer>
+function SubstituteMacros(buffer)
+{
+    // create class name from project name which is valid c++ identifier
+    local Prefix = GetFixedProjectName(Wizard.GetProjectName());
+//     local PchInclude = WantPCH ? ( _T("#include \"") + PCHFileName + _T("\"\n") ) : _T("");
+
+    // macros substitution
+    buffer.Replace(_T("[XTENSA_TOOLS_ROOT]"), ToolchainPath);
+    buffer.Replace(_T("[SDK_BASE]"), SdkPath);
+    buffer.Replace(_T("[LIBS]"), Libs);
+    buffer.Replace(_T("[ESPPORT]"), EspPort);
+
+    if (useICACHE_FLASH_ATTR)
+    {
+        buffer.Replace(_T("[useICACHE_FLASH_ATTR]"), _T("ICACHE_FLASH_ATTR"));
+        buffer.Replace(_T("[OSTYPEH]"), _T("#include \"os_type.h\""));
+    }
+
+    return buffer;
+}
+
+// setup the already created project
+function SetupProject(project)
+{
+    // we don't need debug target
+    project.RemoveBuildTarget(_T("Debug"));
+
+    // we use custom Makefile
+    project.SetMakefileCustom(true);
+
+    return true;
+}
