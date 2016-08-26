@@ -91,6 +91,131 @@
 				<border>5</border>
 				<option>1</option>
 			</object>
+
+            <object class="sizeritem">
+				<object class="wxStaticText" name="ID_STATICTEXT4">
+					<label>Implementations</label>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <object class="sizeritem">
+                        <object class="wxCheckBox" name="m_impl_user_init">
+                            <label>user__init()</label>
+                            <checked>1</checked>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                        <option>1</option>
+                    </object>
+                    <object class="sizeritem">
+                        <object class="wxCheckBox" name="m_useICACHE_user_init">
+                            <label>Use ICACHE__FLASH__ATTR</label>
+                            <checked>1</checked>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                    </object>
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>0</border>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <object class="sizeritem">
+                        <object class="wxCheckBox" name="m_impl_user_rf_pre_init">
+                            <label>user__rf__pre__init()</label>
+                            <checked>1</checked>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                        <option>1</option>
+                    </object>
+                    <object class="sizeritem">
+                        <object class="wxCheckBox" name="m_useICACHE_user_rf_pre_init">
+                            <label>Use ICACHE__FLASH__ATTR</label>
+                            <checked>1</checked>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                    </object>
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>0</border>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <object class="sizeritem">
+                        <object class="wxCheckBox" name="m_impl_user_procTask">
+                            <label>user__procTask()</label>
+                            <checked>1</checked>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                        <option>1</option>
+                    </object>
+                    <object class="sizeritem">
+                        <object class="wxCheckBox" name="m_useICACHE_user_procTask">
+                            <label>Use ICACHE__FLASH__ATTR</label>
+                            <checked>1</checked>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                    </object>
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>0</border>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <object class="sizeritem">
+                        <object class="wxStaticText" name="m_label_user_procTaskPrio">
+                            <label>user__procTaskPrio</label>
+                        </object>
+                        <flag>wxALIGN_CENTER_VERTICAL</flag>
+                        <border>5</border>
+                        <option>1</option>
+                    </object>
+                    <object class="sizeritem">
+                        <object class="wxTextCtrl" name="m_def_user_procTaskPrio">
+                            <value>0</value>
+                        </object>
+                        <flag>wxALL|wxEXPAND</flag>
+                        <border>5</border>
+                    </object>
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>0</border>
+            </object>
+
+            <object class="sizeritem">
+                <object class="wxBoxSizer">
+                    <object class="sizeritem">
+                        <object class="wxStaticText" name="m_label_user_procTaskQueueLen">
+                            <label>user__procTaskQueueLen</label>
+                        </object>
+                        <flag>wxALIGN_RIGHT_VERTICAL</flag>
+                        <border>5</border>
+                        <option>1</option>
+                    </object>
+                    <object class="sizeritem">
+                        <object class="wxTextCtrl" name="m_def_user_procTaskQueueLen">
+                            <value>1</value>
+                        </object>
+                        <flag>wxALL|wxEXPAND</flag>
+                        <border>5</border>
+                    </object>
+                </object>
+                <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxEXPAND</flag>
+				<border>0</border>
+            </object>
+
             <object class="sizeritem">
 				<object class="wxCheckBox" name="m_useICACHE_FLASH_ATTR">
                     <label>Use ICACHE_FLASH_ATTR for user__init()</label>
@@ -99,6 +224,15 @@
 				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
 			</object>
+
+            <object class="sizeritem">
+				<object class="wxStaticText" name="ID_STATICTEXT5">
+					<label>Use examples</label>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+
             <object class="sizeritem">
 				<object class="wxCheckBox" name="m_useBlinky">
                     <label>Use Blinky example</label>

@@ -1,8 +1,8 @@
-[OSTYPEH]
+#include "os_type.h"
 #include "user_config.h"
 
-//Init function 
-void [useICACHE_FLASH_ATTR]
-user_init()
-{
-}
+[impl_user_procTask]
+
+[impl_user_rf_pre_init]
+
+[impl_user_init]

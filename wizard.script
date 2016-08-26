@@ -15,7 +15,18 @@ Libs <- _T("");
 EspPort <- _T("/dev/ttyUSB0");
 
 // Global helper
-useICACHE_FLASH_ATTR <- true;
+impl_user_init <- true
+useICACHE_user_init <- true
+
+impl_user_rf_pre_init <- true
+useICACHE_user_rf_pre_init <- true
+
+impl_user_procTask <- true
+useICACHE_user_procTask <- true
+
+def_user_procTaskPrio <- 0
+def_user_procTaskQueueLen <- 1
+
 useBlinky <- false;
 SelectedLibraries <- wxArrayString();
 
@@ -42,8 +53,6 @@ function BeginWizard()
                                         _T("SDK location"), _T("$(SDK_BASE)"));
         Wizard.AddPage(_T("librariesChoice"));
         Wizard.AddProjectPathPage();
-//         Wizard.AddCompilerPage(_T("GNU Xtensa GCC Compiler"), _T("xtensa-lx106*"), false, true);
-
     }
     else
         print(wiz_type);
@@ -102,7 +111,18 @@ function OnLeave_librariesChoice(fwd)
         local libraries = Wizard.GetCheckListboxStringChecked(_T("m_listLibraries"));
         SelectedLibraries = GetArrayFromString(libraries, _(";"), true);
 
-        useICACHE_FLASH_ATTR = Wizard.IsCheckboxChecked(_T("m_useICACHE_FLASH_ATTR"));
+        impl_user_init = Wizard.IsCheckboxChecked(_T("m_impl_user_init"));
+        useICACHE_user_init = Wizard.IsCheckboxChecked(_T("m_useICACHE_user_init"));
+
+        impl_user_rf_pre_init = Wizard.IsCheckboxChecked(_T("m_impl_user_rf_pre_init"));
+        useICACHE_user_rf_pre_init = Wizard.IsCheckboxChecked(_T("m_useICACHE_user_rf_pre_init"));
+
+        impl_user_procTask = Wizard.IsCheckboxChecked(_T("m_impl_user_procTask"));
+        useICACHE_user_procTask = Wizard.IsCheckboxChecked(_T("m_useICACHE_user_procTask"));
+
+        def_user_procTaskPrio = Wizard.GetTextControlValue(_T("m_def_user_procTaskPrio"));
+        def_user_procTaskQueueLen = Wizard.GetTextControlValue(_T("m_def_user_procTaskQueueLen"));
+
         useBlinky = Wizard.IsCheckboxChecked(_T("m_useBlinky"));
     }
 
@@ -205,7 +225,7 @@ function GenerateSourceFile(index)
     local path = Wizard.FindTemplateFile(GetTemplateFile(index));
     local buffer = IO.ReadFileContents(path);
 
-    return SubstituteMacros(buffer);
+    return SubstituteMacrosSource(buffer);
 }
 
 // -----------------------------------------------------------------------------
@@ -218,10 +238,70 @@ function SubstituteMacros(buffer)
     buffer.Replace(_T("[LIBS]"), Libs);
     buffer.Replace(_T("[ESPPORT]"), EspPort);
 
-    if (useICACHE_FLASH_ATTR)
+    return buffer;
+}
+
+// -----------------------------------------------------------------------------
+// substitute all plugin macros in <buffer>
+function SubstituteMacrosSource(buffer)
+{
+    // macros substitution
+    buffer.Replace(_T("[XTENSA_TOOLS_ROOT]"), ToolchainPath);
+    buffer.Replace(_T("[SDK_BASE]"), SdkPath);
+    buffer.Replace(_T("[LIBS]"), Libs);
+    buffer.Replace(_T("[ESPPORT]"), EspPort);
+
+    if (impl_user_init)
     {
-        buffer.Replace(_T("[useICACHE_FLASH_ATTR]"), _T("ICACHE_FLASH_ATTR"));
-        buffer.Replace(_T("[OSTYPEH]"), _T("#include \"os_type.h\""));
+        local text = _T("//Init function\n") +
+            _T("void [useICACHE]\n") +
+            _T("user_init()\n") +
+            _T("{\n") +
+            _T("}");
+
+        buffer.Replace(_T("[impl_user_init]"), text);
+
+        if (useICACHE_user_init)
+            buffer.Replace(_T("[useICACHE]"), _T("ICACHE_FLASH_ATTR"));
+        else
+            buffer.Replace(_T("[useICACHE]"), _T(""));
+    }
+
+    if (impl_user_rf_pre_init)
+    {
+        local text = _T("// RF initialization\n") +
+            _T("void [useICACHE]\n") +
+            _T("user_rf_pre_init()\n") +
+            _T("{\n") +
+            _T("}");
+
+        buffer.Replace(_T("[impl_user_rf_pre_init]"), text);
+
+        if (useICACHE_user_init)
+            buffer.Replace(_T("[useICACHE]"), _T("ICACHE_FLASH_ATTR"));
+        else
+            buffer.Replace(_T("[useICACHE]"), _T(""));
+    }
+
+    if (impl_user_procTask)
+    {
+        local text = _T("// Do nothing function\n") +
+            _T("#define user_procTaskPrio        [def_user_procTaskPrio]\n") +
+            _T("#define user_procTaskQueueLen    [def_user_procTaskQueueLen]\n") +
+            _T("os_event_t    user_procTaskQueue[user_procTaskQueueLen];\n") +
+            _T("static void [useICACHE]\n") +
+            _T("user_procTask(os_event_t *events)\n") +
+            _T("{\n") +
+            _T("}");
+
+        buffer.Replace(_T("[impl_user_procTask]"), text);
+        buffer.Replace(_T("[def_user_procTaskPrio]"), def_user_procTaskPrio);
+        buffer.Replace(_T("[def_user_procTaskQueueLen]"), def_user_procTaskQueueLen);
+
+        if (useICACHE_user_init)
+            buffer.Replace(_T("[useICACHE]"), _T("ICACHE_FLASH_ATTR"));
+        else
+            buffer.Replace(_T("[useICACHE]"), _T(""));
     }
 
     return buffer;
@@ -230,11 +310,18 @@ function SubstituteMacros(buffer)
 // setup the already created project
 function SetupProject(project)
 {
-    // we don't need debug target
+    // we don't need default targets
     project.RemoveBuildTarget(_T("Debug"));
+    project.RemoveBuildTarget(_T("Release"));
+
+    // set compiler, this value is irrelevant so standard GNU GCC is good choice
+    project.SetCompilerID(_T("gcc"));
 
     // we use custom Makefile
     project.SetMakefileCustom(true);
+
+    // we need customized targets, 'all' is the main target
+    project.AddBuildTarget(_T("all"));
 
     return true;
 }

@@ -1,7 +1,7 @@
 #include "ets_sys.h"
 #include "osapi.h"
 #include "gpio.h"
-[OSTYPEH]
+#include "os_type.h"
 #include "user_config.h"
 
 #define user_procTaskPrio        0
@@ -35,7 +35,7 @@ user_procTask(os_event_t *events)
 }
 
 //Init function 
-void [useICACHE_FLASH_ATTR]
+void ICACHE_FLASH_ATTR
 user_init()
 {
     // Initialize the GPIO subsystem.
