@@ -43,8 +43,7 @@ function BeginWizard()
         Wizard.AddPage(_T("librariesChoice"));
         Wizard.AddProjectPathPage();
 //         Wizard.AddCompilerPage(_T("GNU Xtensa GCC Compiler"), _T("xtensa-lx106*"), false, true);
-//         Wizard.AddPage(_T("processorChoice"));
-//         Wizard.AddPage(_T("programmerChoice"));
+
     }
     else
         print(wiz_type);
@@ -213,10 +212,6 @@ function GenerateSourceFile(index)
 // substitute all plugin macros in <buffer>
 function SubstituteMacros(buffer)
 {
-    // create class name from project name which is valid c++ identifier
-    local Prefix = GetFixedProjectName(Wizard.GetProjectName());
-//     local PchInclude = WantPCH ? ( _T("#include \"") + PCHFileName + _T("\"\n") ) : _T("");
-
     // macros substitution
     buffer.Replace(_T("[XTENSA_TOOLS_ROOT]"), ToolchainPath);
     buffer.Replace(_T("[SDK_BASE]"), SdkPath);
